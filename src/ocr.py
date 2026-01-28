@@ -99,6 +99,7 @@ class VisionOCR:
         result = self.extract_text(image_path)
         return result['full_text']
     
+    
     @staticmethod
     def _get_bounds(bounding_box):
         """Extract bounding box coordinates"""
