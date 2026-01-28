@@ -22,3 +22,7 @@ uploads/
 # OS
 .DS_Store
 Thumbs.db
+
+# test screenshots
+test-canvas.png
+screenshot.png
