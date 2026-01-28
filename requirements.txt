@@ -1,0 +1,12 @@
+# requirements needed for gcal screenshot -> google API
+
+google-cloud-vision==3.5.0
+google-auth==2.25.2
+google-auth-oauthlib==1.2.0
+google-api-python-client==2.110.0
+python-dateutil==2.8.2
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+Pillow==10.4.0
+pytz==2023.3.post1
