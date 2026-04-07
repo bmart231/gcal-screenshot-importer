@@ -20,9 +20,6 @@ class DateParser:
         # "Due Feb 2 at 10am" (short month format)
         r'due\s+([A-Za-z]{3}\s+\d{1,2})\s+at\s+(\d{1,2}[ap]m)',
         
-        # "Due Jan 15 at 11:59pm" (existing pattern)
-        r'due\s+([A-Za-z]+\s+\d{1,2})\s+at\s+(\d{1,2}:\d{2}\s*[ap]m)',
-        
         # "Due Jan 15 at 11:59pm"
         r'due\s+([A-Za-z]+\s+\d{1,2})\s+at\s+(\d{1,2}:\d{2}\s*[ap]m)',
         
@@ -46,9 +43,6 @@ class DateParser:
         
         # "Due by 11:59pm on Jan 15"
         r'due\s+by\s+(\d{1,2}:\d{2}\s*[ap]m)\s+on\s+([A-Za-z]+\s+\d{1,2})',
-        
-        # "Available until Jan 15, 2024 11:59 PM"
-        r'available\s+until\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4})\s+(\d{1,2}:\d{2}\s*[ap]m)',
     ]
     
     def __init__(self, default_year: Optional[int] = None, timezone: str = 'America/New_York'):

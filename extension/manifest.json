@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Canvas & Gradescope → Google Calendar",
+  "version": "1.1",
+  "description": "Add Canvas and Gradescope assignment due dates directly to Google Calendar.",
+
+  "permissions": ["activeTab", "scripting", "identity", "storage"],
+  "host_permissions": [
+    "https://*.instructure.com/*",
+    "https://gradescope.com/*",
+    "https://*.gradescope.com/*",
+    "https://www.googleapis.com/*",
+    "https://oauth2.googleapis.com/*"
+  ],
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Canvas & Gradescope → Google Calendar"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.instructure.com/*",
+        "https://gradescope.com/*",
+        "https://*.gradescope.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

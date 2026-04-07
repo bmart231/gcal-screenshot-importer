@@ -1,127 +1,64 @@
-# Canvas Screenshot to Google Calendar Importer
+# Canvas & Gradescope → Google Calendar
 
-**Automatically extract assignment due dates from Canvas screenshots using Google Cloud Vision OCR and add them to Google Calendar.**
+A Chrome extension that reads assignment due dates directly from Canvas and Gradescope and adds them to Google Calendar. No screenshots, no server required.
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Vision%20API-orange.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+## How it works
 
----
+Open any Canvas assignment page or Gradescope course/assignment page, click the extension, select the assignments you want, and hit Add. Events are created in your primary Google Calendar with 12hr and 20min reminders.
 
-### Key Features
+Optional work block: toggle it on to also add a time block before the due date so you remember to actually do the assignment.
 
-- **High-Accuracy OCR**: Uses Google Cloud Vision API for industry-leading text extraction (90%+ accuracy)
-- **Intelligent Date Parsing**: Recognizes 8+ different Canvas date formats
-- **Course Detection**: Automatically extracts course codes (e.g., "ORF 401", "COS 324")
-- **Google Calendar Integration**: Creates events with reminders and color-coding
-- **Work Time Blocks**: Optionally schedules study time before due dates
-- **Command-Line Interface**: Simple, scriptable interface for batch processing
+Course code is automatically extracted from the page title and prepended to the event name (e.g. `ORF407 - Homework 5`).
 
----
+## Chrome Extension Setup
 
-## 📋 Prerequisites
+1. Go to `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, select the `extension/` folder.
+2. In [Google Cloud Console](https://console.cloud.google.com), create a project and enable the **Google Calendar API**.
+3. Create an OAuth 2.0 credential — type **Web application**.
+4. Add `https://<your-extension-id>.chromiumapp.org/` to **Authorized redirect URIs** (the exact URI is shown in the extension popup).
+5. Click the extension, enter your **Client ID** and **Client Secret**, hit **Save & Connect**.
+6. Authorize via the Google login screen (click Advanced → proceed if you see an unverified app warning — you made this app).
 
-- Python 3.8 or higher
-- Google Cloud account (free tier available)
-- Google account for Calendar access
-- Git
+That's it. No Flask server, no terminal needed.
 
----
+## Flask Web UI (optional)
 
-## 1. Clone the Repository
+There's also a web UI for uploading screenshots if you prefer that workflow.
+
+### Setup
 
 ```bash
-git clone https://github.com/bmart231/gcal-screenshot-importer.git
-cd gcal-screenshot-importer
-```
-
-## 2. Set Up Virtual Environment
-
-```bash
-# Create virtual environment
+cd src
 python -m venv venv
-
-# Activate (Windows)
-venv\Scripts\activate
-
-# Activate (Mac/Linux)
 source venv/bin/activate
+pip install -r ../requirements.txt
 ```
 
-## 3. Install Dependencies
+Add a `credentials/` folder at the project root with your `google-calendar-credentials.json` (Desktop OAuth client) and `google-vision-key.json` (service account for Vision API).
 
 ```bash
-pip install -r requirements.txt
+python app.py
 ```
 
-## 4. Configure Google Cloud APIs
+Open `http://127.0.0.1:5000`, drag in a screenshot of a Canvas assignment, confirm the parsed date, and add it to your calendar.
 
-## 5. Set Up Environment Variables
-
-```bash
-# Copy the template
-cp .env.example .env
-
-# Edit .env (already configured correctly)
-```
-
-Your `.env` file should contain:
+## Python packages
 
 ```
-GOOGLE_APPLICATION_CREDENTIALS=./credentials/google-vision-key.json
-GOOGLE_CALENDAR_CREDENTIALS=./credentials/google-calendar-credentials.json
-TIMEZONE=America/New_York
+google-cloud-vision
+google-auth
+google-auth-oauthlib
+google-api-python-client
+python-dateutil
+flask
+flask-cors
+python-dotenv
+Pillow
+pytz
 ```
 
----
+## Supported pages
 
-### Basic Usage
-
-**Preview mode** (extract data without adding to calendar):
-
-```bash
-python src/main.py screenshot.png --preview
-```
-
-**Add to calendar:**
-
-```bash
-python src/main.py screenshot.png
-```
-
-### Advanced Options
-
-**Add work time block:**
-
-```bash
-python src/main.py screenshot.png --work-time --work-hours 3
-```
-
-**Custom title:**
-
-```bash
-python src/main.py screenshot.png --title "My Custom Assignment"
-```
-
-**Different timezone:**
-
-```bash
-python src/main.py screenshot.png --timezone "America/Los_Angeles"
-```
-
-### Batch Processing
-
-Process multiple screenshots at once:
-
-```bash
-# Windows
-for %f in (screenshots\*.png) do python src\main.py %f
-
-# Mac/Linux
-for file in screenshots/*.png; do python src/main.py "$file"; done
-```
-
-```
-
-
-```
+- `canvas.instructure.com/courses/*/assignments/*`
+- `gradescope.com/courses/*/assignments/*`
+- `gradescope.com/courses/*` (picks all upcoming assignments from the list)

@@ -28,7 +28,8 @@ class GoogleCalendar:
             credentials_path: Path to OAuth 2.0 credentials JSON file
         """
         self.credentials_path = credentials_path
-        self.token_path = 'credentials/token.pickle'
+        # Store token alongside the credentials file so the path is always correct
+        self.token_path = os.path.join(os.path.dirname(os.path.abspath(credentials_path)), 'token.pickle')
         self.service = None
         self._authenticate()
     
@@ -86,20 +87,20 @@ class GoogleCalendar:
             'description': description or f'Assignment due',
             'start': {
                 'dateTime': due_datetime.isoformat(),
-                'timeZone': str(due_datetime.tzinfo),
+                'timeZone': os.getenv('TIMEZONE', 'America/New_York'),
             },
             'end': {
                 'dateTime': due_datetime.isoformat(),
-                'timeZone': str(due_datetime.tzinfo),
+                'timeZone': os.getenv('TIMEZONE', 'America/New_York'),
             },
             'reminders': {
                 'useDefault': False,
                 'overrides': [
-                    {'method': 'popup', 'minutes': reminder_minutes},
-                    {'method': 'email', 'minutes': reminder_minutes},
+                    {'method': 'popup', 'minutes': 720},   # 12 hours before
+                    {'method': 'popup', 'minutes': 20},    # 20 minutes before
                 ],
             },
-            'colorId': '11',  # Red color for assignments
+            'colorId': '7',   # Peacock (blue) to match extension color
         }
         
         try:
@@ -160,7 +161,7 @@ class GoogleCalendar:
             },
             'end': {
                 'dateTime': due_datetime.isoformat(),
-                'timeZone': str(due_datetime.tzinfo),
+                'timeZone': os.getenv('TIMEZONE', 'America/New_York'),
             },
             'colorId': '9',  # Blue color for work blocks
         }
@@ -212,10 +213,10 @@ class GoogleCalendar:
             print(f'An error occurred: {error}')
             return []
     
-def delete_event(self, event_id: str, calendar_id: str = 'primary') -> bool:
+    def delete_event(self, event_id: str, calendar_id: str = 'primary') -> bool:
         """
         Delete a calendar event
-        
+
         Args:
             event_id: ID of event to delete
             calendar_id: Calendar containing the event
